@@ -37,19 +37,17 @@ const LoginPage: React.FC = () => {
     <View
       className="login-page"
       style={{
-        backgroundColor: "#1990ff",
+        backgroundColor: "#1da1f2",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-      }}
-    >
+      }}>
       <View className="logo"></View>
       <View
         className="title"
-        style={{ color: "#ffffff", fontSize: "32px", marginTop: "20px" }}
-      >
+        style={{ color: "#ffffff", fontSize: "32px", marginTop: "20px" }}>
         Nice to see you
       </View>
       <Button
@@ -60,14 +58,13 @@ const LoginPage: React.FC = () => {
           width: "200px",
           marginTop: "50px",
           backgroundColor: "#ffffff",
-          color: "#1990ff",
+          color: "#1da1f2",
           borderRadius: "20px",
           padding: "10px 20px",
           fontSize: "18px",
           fontWeight: "bold",
           boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
-        }}
-      >
+        }}>
         微信用户一键登录
       </Button>
     </View>

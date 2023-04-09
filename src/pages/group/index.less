@@ -1,0 +1,116 @@
+.Group {
+  background-color: #f6f6f8;
+  height: 100vh;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+.add-group {
+  position: absolute;
+  bottom: 40px;
+  z-index: 10;
+  right: 40px;
+  background-color: #1da1f2;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:active {
+    background-color: #008be2;
+  }
+  .at-icon-add {
+    font-size: 64px;
+    color: #fff;
+  }
+}
+.at-icon {
+  color: #1da1f2;
+}
+.title {
+  font-size: 36px;
+  font-weight: 500;
+  color: #5b5b5b;
+  padding: 32px;
+  border-bottom: 2px solid #f5f5f5;
+}
+.group-list {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.group-item {
+  padding: 32px;
+  border-bottom: 2px solid #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  &:active {
+    color: #008be2;
+    background-color: #f6f6f8;
+  }
+}
+
+.group-name {
+  font-size: 32px;
+  color: #333;
+}
+
+.follow-list {
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.follow-item {
+  display: flex;
+  align-items: center;
+  padding: 32px;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.follow-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  margin-right: 32px;
+}
+
+.follow-info {
+  flex: 1;
+}
+
+.follow-name {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 32px;
+  color: #333;
+}
+
+.follow-handle {
+  font-size: 28px;
+  color: #666;
+}
+
+.follow-button {
+  width: 160px;
+  height: 64px;
+  background-color: #1da1f2;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:active {
+    background-color: #008be2;
+  }
+}
+
+.follow-button-text {
+  font-size: 28px;
+  color: #fff;
+  font-weight: bold;
+}

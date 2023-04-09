@@ -1,9 +1,11 @@
-export default defineAppConfig({
+export default {
   pages: [
-    "pages/login/index",
     "pages/index/index",
-    "pages/me/index",
+    "pages/addGroup/index",
+    "pages/addSchedule/index",
     "pages/group/index",
+    "pages/login/index",
+    "pages/me/index",
   ],
   tabBar: {
     color: "#999999",
@@ -36,4 +38,4 @@ export default defineAppConfig({
     navigationBarTitleText: "WeChat",
     navigationBarTextStyle: "black",
   },
-});
+};
