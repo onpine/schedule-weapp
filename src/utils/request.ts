@@ -1,5 +1,6 @@
 import Taro from "@tarojs/taro";
 import { BASE_URL } from "../utils/config";
+
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
 interface RequestParams {
@@ -23,16 +24,29 @@ const request = {
     return this.request({ url, method: "DELETE", data, header });
   },
   request({ url, method = "GET", data = {}, header = {} }: RequestParams) {
+    const token = Taro.getStorageSync("token");
+    if (!token) {
+      Taro.navigateTo({
+        url: "/pages/login/index",
+      });
+      return;
+    }
     return Taro.request({
       url: BASE_URL + url,
       method,
-      data,
+      data: { ...data, token },
       header: {
         ...header,
         "content-type": "application/json",
+        // Authorization: token,
       },
     })
       .then((res) => {
+        if (res.data?.state !== 200) {
+          Taro.showToast({
+            title: `请求异常:${res?.data?.state}`,
+          });
+        }
         // 处理请求成功后的逻辑，例如检查登录状态等
         return res.data;
       })

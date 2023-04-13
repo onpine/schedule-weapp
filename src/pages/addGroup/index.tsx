@@ -1,18 +1,31 @@
 import { useState } from "react";
-import Taro from "@tarojs/taro";
+import Taro, { useRouter } from "@tarojs/taro";
 import { View, Form } from "@tarojs/components";
 import { AtInput, AtButton } from "taro-ui";
+import { postGroup } from "../../services/index";
 import "./index.less";
+import { userId } from "../../utils";
 
 function ScheduleForm() {
-  const [content, setContent] = useState("");
+  const { params = { id: "", name: "" } } = useRouter();
+  const [content, setContent] = useState(params?.name);
   const [name, setName] = useState("");
+  const [members, setMembers] = useState<any>([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ content });
-    Taro.switchTab({
-      url: "/pages/group/index",
+    postGroup({
+      name: content,
+      member_id: members?.map((el) => Number(el)),
+      user_id: userId,
+      group_id: params.id,
+    }).then((res) => {
+      if (res?.state == 200) {
+        Taro.reLaunch({
+          url: "/pages/group/index",
+        });
+      }
     });
   };
 
@@ -32,9 +45,11 @@ function ScheduleForm() {
         </View>
         <View className="title">成员列表</View>
         <View className="members">
-          <View className="member">@瘦成闪电</View>
-          <View className="member">@瘦成闪电</View>
-          <View className="member">@瘦成闪电</View>
+          {members?.map((el) => (
+            <View key={el?.group_id} className="member">
+              @{el}
+            </View>
+          ))}
         </View>
         <AtInput
           clear
@@ -46,7 +61,14 @@ function ScheduleForm() {
           onChange={(v: string) => {
             setName(v);
           }}>
-          <View className="at-icon at-icon-add-circle"></View>
+          <View
+            className="at-icon at-icon-add-circle"
+            onClick={() => {
+              setMembers((old: any[]) => {
+                return [...old, name];
+              });
+              setName("");
+            }}></View>
         </AtInput>
 
         <AtButton className="submit" type="primary" formType="submit">

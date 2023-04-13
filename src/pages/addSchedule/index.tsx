@@ -1,17 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Form, Picker } from "@tarojs/components";
 import { AtInput, AtList, AtListItem, AtButton } from "taro-ui";
+import Taro, { useRouter } from "@tarojs/taro";
+import dayjs from "dayjs";
+import { postSchedule, getListGroup } from "../../services/index";
+import { userId } from "../../utils/index";
 import "./index.less";
 
 function ScheduleForm() {
-  const [content, setContent] = useState("");
-  const [date, setDate] = useState("2023-04-08");
-  const [startTime, setStartTime] = useState("12:01");
-  const [endTime, setEndTime] = useState("12:01");
+  const { params = { id: "", info: "{}" } } = useRouter();
+  const info = JSON.parse(params.info || "{}");
+
+  const [content, setContent] = useState(info?.describe || "");
+  const [date, setDate] = useState(info?.date);
+  const [startTime, setStartTime] = useState(dayjs(info?.start_time).format("HH:mm"));
+  const [endTime, setEndTime] = useState(dayjs(info?.finish_time).format("HH:mm"));
+  const [groups, setGroups] = useState<any[]>([]);
+  const [groupName, setGroupName] = useState("");
+  const [groupId, setGroupId] = useState(info?.group_id);
+
+  useEffect(() => {
+    getListGroup({ user_id: userId }).then((res) => {
+      console.log(res);
+      if (res?.state == 200) {
+        setGroups(res?.groups);
+      }
+    });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ content, date, startTime, endTime });
+    if (!groupId || !content) {
+      Taro.showToast({ title: "请填写完整信息" });
+      return;
+    }
+    postSchedule({
+      describe: content,
+      date: date,
+      start_time: `${date} ${startTime}:00`,
+      finish_time: `${date} ${endTime}:00`,
+      user_id: userId,
+      group_id: groupId,
+      schedule_id: params?.id,
+    }).then((res) => {
+      if (res?.state === 200) {
+        Taro.showToast({
+          title: "提交成功",
+        });
+        Taro.reLaunch({
+          url: "/pages/index/index",
+        });
+      }
+    });
   };
 
   return (
@@ -27,6 +68,20 @@ function ScheduleForm() {
               setContent(value);
             }}
           />
+        </View>
+
+        <View className="form-item">
+          <Picker
+            mode="selector"
+            range={groups?.map((el) => el?.name)}
+            onChange={(e) => {
+              setGroupName(groups[e.detail.value]?.name);
+              setGroupId(groups[e.detail.value]?.group_id);
+            }}>
+            <AtList>
+              <AtListItem title="群组" extraText={groupName || "请选择"} />
+            </AtList>
+          </Picker>
         </View>
         <View className="form-item">
           <Picker

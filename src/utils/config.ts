@@ -1,5 +1,5 @@
 const baseUrls = {
-  development: "http://127.0.0.1",
+  development: "http://zinchon.com:334",
   production: "http://127.0.0.1",
 };
 

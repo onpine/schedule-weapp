@@ -1,17 +1,70 @@
 // import Taro from "@tarojs/taro";
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { AtActionSheet, AtActionSheetItem } from "taro-ui";
+import { userId } from "../../utils";
+import { TimePicker } from "../../components/TimePicker";
+import { getScheduleList, postSchedule } from "../../services/index";
 import "./index.less";
 
 function Home() {
-  const [isOpened, setIsOpen] = useState(false);
-  const onSetting = () => {
-    setIsOpen(true);
+  const [isOpened, setIsOpen] = useState<any>("");
+  const [schedules, setSchedules] = useState<any>([]);
+  const [info, setInfo] = useState<any>({});
+  const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
+
+  const onSetting = (id, obj) => {
+    setIsOpen(id);
+    setInfo(obj);
   };
+
+  const handleDelete = () => {
+    postSchedule({ schedule_id: isOpened }).then((res) => {
+      if (res?.state === 200) {
+        setIsOpen("");
+        setInfo({});
+        Taro.showToast({
+          title: "删除成功",
+        });
+        setTimeout(() => {
+          getData();
+        }, 1000);
+      }
+    });
+  };
+
+  const handleEdit = () => {
+    setIsOpen("");
+    setInfo({});
+    Taro.navigateTo({
+      url: `/pages/addSchedule/index?id=${isOpened}&info=${JSON.stringify(info)}`,
+    });
+  };
+
+  const getData = useCallback(() => {
+    getScheduleList({ user_id: userId, date: date }).then((res) => {
+      if (res.state === 200) {
+        setSchedules(res?.schedules);
+      }
+    });
+  }, [date]);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
+
   return (
     <View className="home">
+      <View className="topTime">
+        <TimePicker
+          onChange={(d: any) => {
+            setDate(dayjs(d.toLocaleDateString()).format("YYYY-MM-DD"));
+          }}
+        />
+      </View>
+
       <View className="add-schedule">
         <View
           className="at-icon at-icon-add"
@@ -21,23 +74,32 @@ function Home() {
             });
           }}></View>
       </View>
-      <ScheduleCard
-        description="参加会议"
-        startDate="2021/10/01"
-        startTime="8:00"
-        endTime="12:00"
-        source="公司安排"
-        onSetting={onSetting}
-      />
+      <View className="content">
+        {schedules?.map((el) => (
+          <ScheduleCard
+            key={el?.schedule_id}
+            id={el?.schedule_id}
+            description={el?.describe}
+            startDate={el?.date}
+            startTime={dayjs(el?.start_time).format("HH:mm")}
+            endTime={dayjs(el?.finish_time).format("HH:mm")}
+            source={`@${el?.group_id}`}
+            item={el}
+            onSetting={onSetting}
+          />
+        ))}
+      </View>
+
       <AtActionSheet
-        isOpened={isOpened}
+        isOpened={!!isOpened}
         cancelText="取消"
-        title="日程名称"
+        title={info?.description}
         onClose={() => {
-          setIsOpen(false);
+          setIsOpen("");
+          setInfo({});
         }}>
-        <AtActionSheetItem>修改</AtActionSheetItem>
-        <AtActionSheetItem>
+        <AtActionSheetItem onClick={handleEdit}>修改</AtActionSheetItem>
+        <AtActionSheetItem onClick={handleDelete}>
           <Text style={{ color: "#FF5353" }}>删除</Text>
         </AtActionSheetItem>
       </AtActionSheet>
@@ -46,12 +108,14 @@ function Home() {
 }
 
 const ScheduleCard = ({
+  id,
   description,
   startDate,
   startTime,
   endTime,
   source,
   onSetting,
+  item,
 }) => (
   <View className="schedule-card">
     <View className="schedule-header">
@@ -72,7 +136,7 @@ const ScheduleCard = ({
         <View
           className="at-icon at-icon-menu"
           onClick={() => {
-            onSetting("id");
+            onSetting(id, item);
           }}></View>
       </View>
     </View>

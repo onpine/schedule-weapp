@@ -14,7 +14,10 @@ const LoginPage: React.FC = () => {
           loginCode,
         }).then((res) => {
           console.log(res);
-          if (res.data.state === 200) {
+          if (res.state === 200) {
+            const { token, ...userInfo } = res.info;
+            Taro.setStorageSync("token", res?.info?.token);
+            Taro.setStorageSync("userInfo", JSON.stringify(userInfo));
             Taro.switchTab({
               url: "/pages/index/index",
             });

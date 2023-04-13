@@ -1,5 +1,7 @@
 // import Taro from "@tarojs/taro";
 import { View, Image, Text } from "@tarojs/components";
+import Taro from "@tarojs/taro";
+import { userId } from "../../utils/index";
 import "./index.less";
 
 export default function ProfilePage() {
@@ -14,7 +16,7 @@ export default function ProfilePage() {
           className="avatar"
           src="https://n.sinaimg.cn/sinakd20210815ac/448/w1024h1024/20210815/aa5e-8f81c276417a5eac1f76d6cf8b0e4a29.jpg"
         />
-        <Text className="name">Elon Musk</Text>
+        <Text className="name">@{userId}</Text>
       </View>
       <View className="content">
         <View className="item">
@@ -26,7 +28,15 @@ export default function ProfilePage() {
           <Text className="value">Los Angeles, CA</Text>
         </View>
         <View className="item">
-          <Text className="label" style={{ color: "red" }}>
+          <Text
+            className="label"
+            style={{ color: "red" }}
+            onClick={() => {
+              Taro.clearStorageSync();
+              Taro.reLaunch({
+                url: "/pages/login/index",
+              });
+            }}>
             退出登录
           </Text>
           <View className="at-icon at-icon-trash"></View>
