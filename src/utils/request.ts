@@ -25,11 +25,11 @@ const request = {
   },
   request({ url, method = "GET", data = {}, header = {} }: RequestParams) {
     const token = Taro.getStorageSync("token");
-    if (!token) {
+    if (!token && url !== "/login") {
       Taro.navigateTo({
         url: "/pages/login/index",
       });
-      return;
+      return Promise.reject("未登录，前往登录");
     }
     return Taro.request({
       url: BASE_URL + url,
